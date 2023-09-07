@@ -11,16 +11,17 @@ int main() {
     int pid = fork();
     if (pid == 0) {
         close(0);
-        dup(p[0]); // 子进程将管道的读端口拷贝在描述符0上
-                   // 关闭 p 中的描述符
-        close(p[0]);
+        dup(p[0]);
         close(p[1]);
-        execv(argv[0], argv); // 使用完整路径和命令名称
+        execv(argv[0], argv);
     } else if (pid > 0) {
-        write(p[1], "hello world\n", 12);
-        // 关闭 p 中的描述符
-        close(p[0]);
-        close(p[1]);
+        close(0);
+        close(p[0]); 
+        char buffer[1024] = " sdsacas scascas \n";
+        int bytesRead = 20;
+        write(p[1], buffer, bytesRead);
+        close(p[1]); // 关闭管道的写入端
+
     } else {
         perror("fork()");
         return 1;

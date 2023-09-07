@@ -11,16 +11,11 @@ int main() {
     int pid = fork();
     if (pid == 0) {
         close(0);
-        dup(p[0]); // 子进程将管道的读端口拷贝在描述符0上
-                   // 关闭 p 中的描述符
-        close(p[0]);
-        close(p[1]);
-        execv(argv[0], argv); // 使用完整路径和命令名称
+        dup(p[0]); // 重定向到标准输入
+        close(p[1]); // 关闭这个输入
+        execv(argv[0], argv);
     } else if (pid > 0) {
         write(p[1], "hello world\n", 12);
-        // 关闭 p 中的描述符
-        close(p[0]);
-        close(p[1]);
     } else {
         perror("fork()");
         return 1;
